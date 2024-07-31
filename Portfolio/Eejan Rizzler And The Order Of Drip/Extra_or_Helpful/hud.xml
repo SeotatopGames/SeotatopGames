@@ -1,0 +1,6 @@
+﻿<hud name="Game hud" width="800" height="600">
+
+	<element name="Score:"			pos_x="0.0" pos_y="-0.8" scale_x="1.0" scale_y="0.25" rotation="0.0" depth="0.028" sr_x="185" sr_y="450" sr_w="800" sr_h="600" textureID ="2"/>
+	<element name="00000000"	pos_x="0.0" pos_y="-0.8" scale_x="1.0" scale_y="0.25" rotation="0.0" depth="0.028" sr_x="0"	  sr_y="0"	 sr_w="800" sr_h="600" textureID ="6"/>
+   
+</hud>

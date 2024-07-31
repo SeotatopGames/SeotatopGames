@@ -1,0 +1,397 @@
+	struct VEC2D {
+		float x, y;
+	};
+	struct Node {
+		int type, id;
+		int pelletType;
+		Node* left, * right, * up, * down, * teleport = nullptr;
+		int specialUp, specialDown, specialLeft, specialRight;
+		float extraData;
+		VEC2D position;
+	};
+
+	struct MapData {
+		std::vector<Node> levelNodes;
+		Node* BlinkySpawn = nullptr;
+		Node* InkySpawn = nullptr;
+		Node* PinkySpawn = nullptr;
+		Node* ClydeSpawn = nullptr;
+		Node PacSpawn;
+		Node FruitSpawn;
+	};
+
+	MapData mapData;
+
+if (std::strcmp(linebuffer, "NODE") == 0) {
+	file.ReadLine(linebuffer, 1024, '\n');
+	int arraySizeX, arraySizeY;
+	std::sscanf(linebuffer, "%d, %d", &arraySizeX, &arraySizeY);
+	Node** map = new Node * [arraySizeX * arraySizeY];
+	for (int x = 0; x < arraySizeX * arraySizeY; x++) {
+		map[x] = nullptr;
+	}
+	file.ReadLine(linebuffer, 1024, '\n');
+	while (std::strcmp(linebuffer, "END") != 0) {
+		Node tempNode;
+		int id;
+		std::sscanf(linebuffer, "%d", &id);
+		tempNode.id = id; //Lazy. shush.
+		file.ReadLine(linebuffer, 1024, '\n');
+		std::sscanf(linebuffer, "%f, %f", &tempNode.position.x, &tempNode.position.y);
+		file.ReadLine(linebuffer, 1024, '\n');
+		std::sscanf(linebuffer, "%f, %d, %d, %d, %d, %d, %d",
+			&tempNode.extraData, &tempNode.type, &tempNode.pelletType,
+			&tempNode.specialDown, &tempNode.specialLeft, &tempNode.specialRight, &tempNode.specialUp);
+		if (tempNode.type == 0 || tempNode.type == 3 || tempNode.type == 8) {
+			switch (tempNode.type) {
+			case 0:
+				break;
+			case 3:
+				mapData.PacSpawn = tempNode;
+				break;
+			case 8:
+				mapData.FruitSpawn = tempNode;
+			}
+		}
+		else {
+			switch (tempNode.type) {
+			case 1:
+			case 2:
+				mapData.levelNodes.push_back(tempNode);
+				break;
+			case 4:
+				mapData.levelNodes.push_back(tempNode);
+				break;
+			case 5:
+				mapData.levelNodes.push_back(tempNode);
+				break;
+			case 6:
+				mapData.levelNodes.push_back(tempNode);
+				break;
+			case 7:
+				mapData.levelNodes.push_back(tempNode);
+				break;
+			}
+			file.ReadLine(linebuffer, 1024, '\n');
+		}
+	}
+
+	for (int x = 0; x < mapData.levelNodes.size(); x++) {
+		switch (mapData.levelNodes[x].type) {
+		case 2:
+		{
+			bool success = false;
+			for (int y = 0; y < mapData.levelNodes.size(); y++) {
+				if (mapData.levelNodes[y].id == mapData.levelNodes[x].extraData) {
+					mapData.levelNodes[x].teleport = &(mapData.levelNodes[x]);
+					success = true;
+					break;
+				}
+			}
+		}
+		case 1:
+			map[mapData.levelNodes[x].id - 1] = &(mapData.levelNodes[x]);
+			break;
+		case 4:
+			map[mapData.levelNodes[x].id - 1] = mapData.InkySpawn = &(mapData.levelNodes[x]);
+			break;
+		case 5:
+			map[mapData.levelNodes[x].id - 1] = mapData.BlinkySpawn = &(mapData.levelNodes[x]);
+			break;
+		case 6:
+			map[mapData.levelNodes[x].id - 1] = mapData.PinkySpawn = &(mapData.levelNodes[x]);
+			break;
+		case 7:
+			map[mapData.levelNodes[x].id - 1] = mapData.ClydeSpawn = &(mapData.levelNodes[x]);
+			break;
+		}
+	}
+	for (int y = 0; y < arraySizeY; y++) {
+		for (int x = 0; x < arraySizeX; x++) {
+
+			int position = y * arraySizeX + x;
+			int connectionsCount = 0;
+			if (position >= arraySizeY * arraySizeX)
+				continue;
+			if (map[position] == nullptr)
+				continue;
+
+
+			if (y > 0) {
+				map[position]->up = map[(position)-arraySizeX];
+			}
+			else {
+				map[position]->up = nullptr;
+			}
+			if (y < arraySizeY - 1) {
+				map[position]->down = map[(position)+arraySizeX];
+			}
+			else {
+				map[position]->down = nullptr;
+			}
+			if (position % arraySizeX != 0) {
+				map[position]->left = map[(position)-1];
+			}
+			else {
+				map[position]->left = nullptr;
+			}
+			if (x != arraySizeX - 1) {
+				map[position]->right = map[(position)+1];
+			}
+			else {
+				map[position]->right = nullptr;
+			}
+
+
+			if (map[position]->right != nullptr) {
+				connectionsCount++;
+			}
+			if (map[position]->left != nullptr) {
+				connectionsCount++;
+			}
+			if (map[position]->up != nullptr) {
+				connectionsCount++;
+			}
+			if (map[position]->down != nullptr) {
+				connectionsCount++;
+			}
+			if (map[position]->type == 2) {
+				connectionsCount++;
+			}
+			if (connectionsCount < 2) {
+				std::cout << "NODE ERROR: Node with ID " << position << " HAS ONE CONNECTION.\n";
+			}
+		}
+	}
+	delete[] map;
+}
+
+public:
+	void GhostTestProgram(bool RUNGHOSTPATHINGTEST) {
+		if (RUNGHOSTPATHINGTEST == 1) {
+			std::cout << "Running Ghost Test! THIS WILL STOP THE PROGRAM FROM CONTINUING IT'S START UP! IF YOU WISH TO DISABLE THIS TEST GO TO LINE 118 OF 'application.cpp' AND SET TO 0\n";
+			enum Direct {
+				UP = 0,
+				LEFT,
+				DOWN,
+				RIGHT,
+				START
+			};
+
+			enum State {
+				IDLE = 0,
+				CHASE,
+				SCATTER,
+				FRIGHTENED,
+				EATEN
+			};
+
+			Node* location = &(mapData.levelNodes[0]);
+			VEC2D pacmanLocation = { 0,0 };
+			VEC2D scatterTarget = { -13, 13 };
+			VEC2D homeTarget = mapData.levelNodes[10].position;
+			Direct direction = START;
+			State state = IDLE;
+			std::string directionStorage[20] = {};
+			while (true) {
+				//ERROR CHECKING
+				if (location == nullptr) { 
+					std::cout << "ERROR: GHOST MOVED TO INVALID NODE!";
+					while (true)
+					{
+					}
+				}
+
+				//MOVEMENT SCRIPT
+				if (state != IDLE) {
+
+					//CHECKING IF GHOST IS ON A TELEPORT TILE
+					if (location->type == 2) {
+						bool success = false;
+						for (int x = 0; x < mapData.levelNodes.size(); x++) {
+							if (mapData.levelNodes[x].id == location->extraData) {
+								std::cout << "Teleporting from " << location->id << " to " << mapData.levelNodes[x].id << '\n';
+								location = &(mapData.levelNodes[x]);
+								success = true;
+								break;
+							}
+						}
+						if (!success)
+							std::cout << "ERROR: NODE ATTEMPTED TELEPORT TO NON-EXISTANT NODE!";
+					}
+
+					//FILTERING WHICH DIRECTIONS THE GHOST IS ALLOWED TO GO BASED OFF OF DIRECTION, WALLS, AND SPECIAL CONDITIONS
+					std::vector<Direct> place = { LEFT, RIGHT, UP, DOWN };
+					for (std::vector<Direct>::iterator itter = place.begin(); itter != place.end();) {
+						if (*itter == UP) {
+							if (direction == UP || location->up == nullptr) {
+								itter = place.erase(itter);
+							}
+							else {
+								itter++;
+							}
+						}
+						else if (*itter == DOWN) {
+							if (direction == DOWN || location->down == nullptr) {
+								itter = place.erase(itter);
+							}
+							else {
+								itter++;
+							}
+						}
+						else if (*itter == LEFT) {
+							if (direction == LEFT || location->left == nullptr) {
+								itter = place.erase(itter);
+							}
+							else {
+								itter++;
+							}
+						}
+						else if (*itter == RIGHT) {
+							if (direction == RIGHT || location->right == nullptr) {
+								itter = place.erase(itter);
+							}
+							else {
+								itter++;
+							}
+						}
+
+					}
+
+					//ERROR CHECKING
+					if (place.size() == 0) {
+						std::cout << "ERROR: GHOST STUCK ON NODE ID: " + location->id;
+						while (true)
+						{
+						}
+					}
+					//DIRECTION DECISION LOGIC
+					else {
+						Direct movingTo;
+						VEC2D targetLocation;
+						//SETTING TARGET BASED OFF STATE
+						switch (state) {
+						case FRIGHTENED: { //IF FRIGHTNED ROAM RANDOMLY
+							int randomOutput = rand() % (place.size());
+							movingTo = place[randomOutput];
+						}
+						case CHASE: { //CHASE IS GHOST SPECIFIC BUT ALL WILL ACT LIKE BLINKY AND GO RIGHT FOR PACMAN
+							//switch(identity) //For Future me to deal with :D
+							// INSERT CODE TO DETERMINE TARGET RELATIVE TO PACMAN!
+							//
+							targetLocation = pacmanLocation;
+							break;
+						}
+						case EATEN: //HEAD TO ITS HOME TILE!
+							targetLocation = homeTarget;
+							break;
+						case SCATTER: //EACH GHOST WILL HAVE A SPECIFIC CORNER IT WILL ROAM TO TO GIVE THE PLAYER A BREATHER!
+							targetLocation = scatterTarget;
+							break;
+						}
+
+						//DETERMINING WHICH MOVE LEADS THE GHOST CLOSER TO THE TARGET
+						float currDist = 999999999999999;
+						if (state != FRIGHTENED) {
+							for (int x = 0; x < place.size(); x++) {
+								float tempDist;
+								Direct tempChoice;
+								switch (place[x]) {
+								case UP:
+									tempDist = abs(sqrt(pow(location->up->position.x - targetLocation.x, 2) + pow(location->up->position.y - targetLocation.y, 2)));
+									tempChoice = UP;
+									break;
+								case DOWN:
+									tempDist = abs(sqrt(pow(location->down->position.x - targetLocation.x, 2) + pow(location->down->position.y - targetLocation.y, 2)));
+									tempChoice = DOWN;
+									break;
+								case LEFT:
+									tempDist = abs(sqrt(pow(location->left->position.x - targetLocation.x, 2) + pow(location->left->position.y - targetLocation.y, 2)));
+									tempChoice = LEFT;
+									break;
+								case RIGHT:
+									tempDist = abs(sqrt(pow(location->right->position.x - targetLocation.x, 2) + pow(location->right->position.y - targetLocation.y, 2)));
+									tempChoice = RIGHT;
+									break;
+								}
+								if (tempDist < currDist) {
+									currDist = tempDist;
+									movingTo = tempChoice;
+								}
+								if (tempDist == currDist) {
+									if (tempChoice > movingTo) {
+										currDist = tempDist;
+										movingTo = tempChoice;
+									}
+								}
+							}
+						}
+
+
+						//SETTING NEW DESTINATION
+						if (movingTo == UP) {
+							location = location->up;
+							direction = DOWN;
+						}
+						else if (movingTo == DOWN) {
+							location = location->down;
+							direction = UP;
+						}
+						else if (movingTo == LEFT) {
+							location = location->left;
+							direction = RIGHT;
+						}
+						else if (movingTo == RIGHT) {
+							location = location->right;
+							direction = LEFT;
+						}
+						if (state != FRIGHTENED) {
+							std::cout << location->id << " Turning: " << direction << " TARGET " << targetLocation.x << " " << targetLocation.y << " CURR POSITION " << location->position.x << " " << location->position.y << " DISTANCE FROM TARGET " << currDist << '\n';
+						}
+						else {
+							std::cout << location->id << " Turning: " << direction << " TARGET RANDOM" << '\n';
+
+						}
+					}
+				}
+				else {
+					//INSERT IDLE TIMER
+				}
+
+				//SWITCH LOGIC HERE
+
+				//EATEN LOGIC SWITCH
+				if (location->position.x == homeTarget.x && location->position.y == homeTarget.y && state == EATEN) {
+					state = SCATTER;
+				}
+				//DEBUG CONTROLS WITH ASYNC CONTROLS BECAUSE F GATEWARE!
+				if (GetAsyncKeyState('1')) {
+					state = IDLE;
+				}
+				if (GetAsyncKeyState('2')) {
+					state = CHASE;
+				}
+				if (GetAsyncKeyState('3')) {
+					state = SCATTER;
+				}
+				if (GetAsyncKeyState('4')) {
+					state = FRIGHTENED;
+				}
+				if (GetAsyncKeyState('5')) {
+					state = EATEN;
+				}
+				if (GetAsyncKeyState('W')) {
+					pacmanLocation.x += .05;
+				}
+				if (GetAsyncKeyState('S')) {
+					pacmanLocation.x -= .05;
+				}
+				if (GetAsyncKeyState('A')) {
+					pacmanLocation.y -= .05;
+				}
+				if (GetAsyncKeyState('D')) {
+					pacmanLocation.y += .05;
+				}
+			}
+		}
+	}

@@ -1,0 +1,40 @@
+////////////////////////////////////////////////////////////////////////////
+HERE FOR RECOVERY PURPOSES! DO NOT REIMPLEMENT UNLESS ABSOLUTELY NESSESARY!
+////////////////////////////////////////////////////////////////////////////
+
+print("----------Begin Light Export----------")
+
+for light in bpy.context.scene.objects:
+    if light.type == 'LIGHT':
+        if light.data.type == "POINT":
+            file.write(light.type + "\n")
+            file.write(light.data.type + "\n")
+            file.write(light.name + "\n")
+            file.write(str(light.location.x) + ", "+ str(light.location.z) + ", " + str(light.location.y) + "\n")
+            file.write(str(light.data.energy) + "\n")
+            file.write(str(round(light.data.color.r, 4)) + ", " + str(round(light.data.color.g, 4)) + ", " + str(round(light.data.color.b, 4)) + "\n")
+            file.write(str(light.data.shadow_soft_size) + "\n")
+            if "Blink" in light:
+                file.write(str(light["Blink"]) + '\n')
+            else:
+                file.write('0\n');
+        else:
+            file.write(light.type + "\n")
+            file.write(light.data.type + "\n")
+            file.write(light.name + "\n")
+            file.write(str(light.location.x) + ", "+ str(light.location.z) + ", " + str(light.location.y) + "\n")
+            file.write(str(light.data.energy) + "\n")
+            file.write(str(round(light.data.color.r, 4)) + ", " + str(round(light.data.color.g, 4)) + ", " + str(round(light.data.color.b, 4)) + "\n")
+            file.write(str(light.data.shadow_soft_size) + "\n")
+            #file.write(str(light.matrix_world[1][0]) + ", " + str(-light.matrix_world[1][1]) + ", " + str(light.matrix_world[1][2]) + "\n")
+            
+            #///////////////////////////////////////////////////
+            #EDIT THIS IF SPOTLIGHTS DO NOT POINT STRAIGHT DOWN
+            #///////////////////////////////////////////////////
+            file.write(str(0) + ", " + str(-1) + ", " + str(0) + "\n")
+            file.write(str(light.data.spot_size) + "\n")
+            value = light.get("Blink", "Failed")
+            if value is not "Failed":
+                file.write(str(light.get("Blink", "Failed")) + '\n')
+            else:
+                file.write('0\n');

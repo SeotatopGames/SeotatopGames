@@ -1,0 +1,148 @@
+	//ghostSystem = game->system<Ghost>("GhostMove System")
+	//	.iter([this](flecs::iter it, Ghost* ghostData) {
+
+	//	//SWITCH LOGIC HERE
+
+	//	//EATEN LOGIC SWITCH
+	//	if (ghostData->state == EATEN) {
+	//		ghostData->state = SCATTER;
+	//	}
+
+	//	if (ghostData->state != IDLE) {
+	//		//CHECKING IF GHOST IS ON A TELEPORT TILE
+	//		if (ghostData->node->nodeType == 2) {
+	//			bool success = false;
+	//			std::cout << "Tell Josh to get off his lazy ass and actually impliment the teleporter in the data structure";
+	//			/*for (int x = 0; x < mapData.levelNodes.size(); x++) {
+	//				if (mapData.levelNodes[x].id == location->extraData) {
+	//					std::cout << "Teleporting from " << location->id << " to " << mapData.levelNodes[x].id << '\n';
+	//					location = &(mapData.levelNodes[x]);
+	//					success = true;
+	//					break;
+	//				}
+	//			}
+	//			if (!success)
+	//				std::cout << "ERROR: NODE ATTEMPTED TELEPORT TO NON-EXISTANT NODE!";*/
+	//		}
+
+	//		//FILTERING WHICH DIRECTIONS THE GHOST IS ALLOWED TO GO BASED OFF OF DIRECTION, WALLS, AND SPECIAL CONDITIONS
+	//		std::vector<Direction> place = { LEFT, RIGHT, UP, DOWN };
+	//		for (std::vector<Direction>::iterator itter = place.begin(); itter != place.end();) {
+	//			if (*itter == UP) {
+	//				if (ghostData->direction == UP || ghostData->node->up == nullptr) {
+	//					itter = place.erase(itter);
+	//				}
+	//				else {
+	//					itter++;
+	//				}
+	//			}
+	//			else if (*itter == DOWN) {
+	//				if (ghostData->direction == DOWN || ghostData->node->down == nullptr) {
+	//					itter = place.erase(itter);
+	//				}
+	//				else {
+	//					itter++;
+	//				}
+	//			}
+	//			else if (*itter == LEFT) {
+	//				if (ghostData->direction == LEFT || ghostData->node->left == nullptr) {
+	//					itter = place.erase(itter);
+	//				}
+	//				else {
+	//					itter++;
+	//				}
+	//			}
+	//			else if (*itter == RIGHT) {
+	//				if (ghostData->direction == RIGHT || ghostData->node->right == nullptr) {
+	//					itter = place.erase(itter);
+	//				}
+	//				else {
+	//					itter++;
+	//				}
+	//			}
+
+	//		}
+	//		//DIRECTION DECISION LOGIC
+	//		Direction movingTo;
+	//		VEC2D targetLocation;
+	//		//SETTING TARGET BASED OFF STATE
+	//		switch (ghostData->state) {
+	//		case FRIGHTENED: { //IF FRIGHTNED ROAM RANDOMLY
+	//			int randomOutput = rand() % (place.size());
+	//			movingTo = place[randomOutput];
+	//		}
+	//		case CHASE: { //CHASE IS GHOST SPECIFIC BUT ALL WILL ACT LIKE BLINKY AND GO RIGHT FOR PACMAN
+	//			//switch(identity) //For Future me to deal with :D
+	//			// INSERT CODE TO DETERMINE TARGET RELATIVE TO PACMAN!
+	//			//
+	//			targetLocation = { ghostData->pacmanPosition->modelTransform->row4.x,  ghostData->pacmanPosition->modelTransform->row4.y };
+	//			break;
+	//		}
+	//		case EATEN: //HEAD TO ITS HOME TILE!
+	//			targetLocation = ghostData->homeNode->position;
+	//			break;
+	//		case SCATTER: //EACH GHOST WILL HAVE A SPECIFIC CORNER IT WILL ROAM TO TO GIVE THE PLAYER A BREATHER!
+	//			targetLocation = ghostData->scatterTarget;
+	//			break;
+	//		}
+
+	//		//DETERMINING WHICH MOVE LEADS THE GHOST CLOSER TO THE TARGET
+	//		float currDist = 999999999999999;
+	//		if (ghostData->state != FRIGHTENED) {
+	//			for (int x = 0; x < place.size(); x++) {
+	//				float tempDist;
+	//				Direction tempChoice;
+	//				switch (place[x]) {
+	//				case UP:
+	//					tempDist = abs(sqrt(pow(ghostData->node->up->position.x - targetLocation.x, 2) + pow(ghostData->node->up->position.y - targetLocation.y, 2)));
+	//					tempChoice = UP;
+	//					break;
+	//				case DOWN:
+	//					tempDist = abs(sqrt(pow(ghostData->node->down->position.x - targetLocation.x, 2) + pow(ghostData->node->down->position.y - targetLocation.y, 2)));
+	//					tempChoice = DOWN;
+	//					break;
+	//				case LEFT:
+	//					tempDist = abs(sqrt(pow(ghostData->node->left->position.x - targetLocation.x, 2) + pow(ghostData->node->left->position.y - targetLocation.y, 2)));
+	//					tempChoice = LEFT;
+	//					break;
+	//				case RIGHT:
+	//					tempDist = abs(sqrt(pow(ghostData->node->right->position.x - targetLocation.x, 2) + pow(ghostData->node->right->position.y - targetLocation.y, 2)));
+	//					tempChoice = RIGHT;
+	//					break;
+	//				}
+	//				if (tempDist < currDist) {
+	//					currDist = tempDist;
+	//					movingTo = tempChoice;
+	//				}
+	//				if (tempDist == currDist) {
+	//					if (tempChoice > movingTo) {
+	//						currDist = tempDist;
+	//						movingTo = tempChoice;
+	//					}
+	//				}
+	//			}
+	//		}
+
+
+	//		//SETTING NEW DESTINATION
+	//		if (movingTo == UP) {
+	//			ghostData->node = ghostData->node->up;
+	//			ghostData->direction = DOWN;
+	//		}
+	//		else if (movingTo == DOWN) {
+	//			ghostData->node = ghostData->node->down;
+	//			ghostData->direction = UP;
+	//		}
+	//		else if (movingTo == LEFT) {
+	//			ghostData->node = ghostData->node->left;
+	//			ghostData->direction = RIGHT;
+	//		}
+	//		else if (movingTo == RIGHT) {
+	//			ghostData->node = ghostData->node->right;
+	//			ghostData->direction = LEFT;
+	//		}
+	//	}
+	//	else {
+	//		//INSERT IDLE TIMER
+	//	}
+	//		});

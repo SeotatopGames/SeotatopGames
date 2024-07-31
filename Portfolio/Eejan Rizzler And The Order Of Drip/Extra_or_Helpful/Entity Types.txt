@@ -1,0 +1,41 @@
+		case 0: //player
+
+		case 1: //enemy 1 - Ghost
+
+		case 2: //special
+
+		case 3: //wall
+
+		case 4: //pellets
+
+		case 5: //power pellets
+
+		case 6: //power pellet spawn - Node
+
+		case 7: //special spawn - Node
+
+		case 8: //wall enemy only - Node
+
+		case 9: //enemy 1 spawn - Node
+
+		case 10: //enemy 2 spawn - Node
+
+		case 11: //enemy 3 spawn - Node
+
+		case 12: //enemy 4 spawn - Node
+
+		case 13: //player spawn - Node
+
+		case 14: //enemy 2 - Ghost
+
+		case 15: //enemy 3 - Ghost
+
+		case 16: //enemy 4 - Ghost
+
+		case 17: //exit left - Node
+
+		case 18: //exit right - Node
+
+		case 19: //travel only - Node
+
+		case 20: //pellet spawn - Node

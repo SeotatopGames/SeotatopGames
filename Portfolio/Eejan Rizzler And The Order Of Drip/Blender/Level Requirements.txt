@@ -1,0 +1,18 @@
+Level Requirements:
+
+Off to the side:
+A Player
+Enemies x4
+A Pellet
+A Power Pellet
+A Special
+
+Maze
+Cut up maze - for collision
+
+Nodes:
+Player Start - Not Visible
+Enemy Start x4 - Not Visible
+Special Spawn - Not Visible
+Pathing Map - Nodes - Not Visible
+Power Pellet spawn x4 - Not Visible 

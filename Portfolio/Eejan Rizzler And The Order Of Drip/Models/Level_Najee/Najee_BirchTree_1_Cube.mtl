@@ -1,0 +1,24 @@
+# Blender MTL File: 'practProject.blend'
+# Material Count: 2
+
+newmtl BirchTree_Bark
+Ns 96.078458
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\\Users\\Najee Jackson\\Desktop\\Classes Folder\\Project Portfollio 4\\Example Space Game\\Textures\\BirchTree_Bark.dds
+
+newmtl BirchTree_Leaves
+Ns 96.078458
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd C:\\Users\\Najee Jackson\\Desktop\\Classes Folder\\Project Portfollio 4\\Example Space Game\\Textures\\odenPic.dds

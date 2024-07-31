@@ -1,0 +1,56 @@
+--- 		BLENDER NODE EXPORTER DOCUMENTATION 		---
+
+This document will contain what you need to know to export a node mesh into the game. 
+
+
+-- 	VARIABLES 	--
+
+In the OBJECT PROPERTIES you can set Custom Properties on the tab of the same name. The Following is a list of what can be used and read if you create items from scratch. NOT ALL ARE REQUIRED AND WILL BE SET TO A DEFAULT VALUE IF ABSENT!
+
+- ExtraData -
+
+Type - Float
+Description - Extra Variable for certain settings. 
+Default Value - 0
+Range - [-Inf, Inf]
+
+- NodeType -
+
+[Refer to Node Types for further information]
+Type - Int
+Description - Informs the Importer which type of tile you are dealing with
+Default Value - 1
+Enum [
+	0 - Null Node
+	1 - Travel Node
+	2 - Teleport Node
+	3 - Player Spawn Node
+	4 - Inky Spawn Node
+	5 - Blinky Spawn Node
+	6 - Pinky Spawn Node
+	7 - Clyde Spawn Node
+	8 - Fruit Spawn
+]
+
+Pellet Type 
+0 - Empty
+1 - Pellet
+2 - Power Pellet
+
+-- 	NODE TYPES 	--
+This will go into further detail about how each node is handled.
+
+- Null Node - 
+A node that will not be used for anything beyond spawning a pellet. They do not get added to the Ghosts Navigation Node.
+
+- Travel Node - 
+A simple node that the ghosts can use to travel around. Does not use any extra data.
+
+- Teleport Node -
+A teleport node is a node that, upon a ghost stepping on the tile will, be warped to the tile with the ID that is set in the ExtraData Variable slot.
+
+- Player Spawn Node -
+Acts like a Null Node, however will dictate where the player should spawn/respawn on the map. ID Should be set higher than the size of the Array to avoid gaps in the map or ID Conflicts. 
+
+- Ghost Spawn Node -
+Acts like a Travel Node, however it will dictate where the specified ghost will spawn and retreat to when defeated. There should only ever be one of these per ghost. ID should not be modified as it will be used to link the ghosts into the rest of the movement network.
