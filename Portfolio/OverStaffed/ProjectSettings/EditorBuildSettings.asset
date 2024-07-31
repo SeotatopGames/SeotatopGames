@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Essentials/Main Menu.unity
+    guid: 0e61aa4ac3afccd43a98429c4a213780
+  - enabled: 1
+    path: Assets/Scenes/Essentials/Character Select.unity
+    guid: 72e5c5a5b8c1a954fb745c00fb9e1a4d
+  - enabled: 1
+    path: Assets/Scenes/Essentials/HUB.unity
+    guid: 1077b4d6287ab9f47b588b05e47df048
+  - enabled: 1
+    path: Assets/Scenes/Essentials/Tutorials/Home.unity
+    guid: eeaba577296e88b4a9f35cea88d7bafc
+  - enabled: 1
+    path: Assets/Scenes/Essentials/Tutorials/RoadBlock.unity
+    guid: 4f03f3db39add244c8114fca6c514be4
+  - enabled: 1
+    path: Assets/Scenes/Essentials/Tutorials/UpTheCliffs.unity
+    guid: cef19808ffec88b4983817377aab3d35
+  - enabled: 1
+    path: Assets/Scenes/Essentials/Tutorials/AcrossTheGap.unity
+    guid: f0c73fec4ba73174998176a08f3faa3b
+  - enabled: 1
+    path: Assets/Scenes/Essentials/Tutorials/Reception.unity
+    guid: 4f30cec027e82d74f8d9bd8db7a3c0cf
+  - enabled: 1
+    path: Assets/Scenes/Essentials/Repeatable Levels/BreakRoom.unity
+    guid: 086bfb73cca563d43a4cbfe45b0d9390
+  - enabled: 1
+    path: Assets/Scenes/Essentials/Repeatable Levels/Commute.unity
+    guid: c67d2b3a15e488844be5caaee901660d
+  - enabled: 1
+    path: Assets/Scenes/Essentials/Repeatable Levels/Central.unity
+    guid: a0404989960342644b8c48a680040f42
+  - enabled: 1
+    path: Assets/Scenes/Essentials/Repeatable Levels/Annex.unity
+    guid: bf10844bfa9a7a24aa72c0bdee2d1991
+  - enabled: 1
+    path: Assets/Scenes/Essentials/Repeatable Levels/Corner Office.unity
+    guid: 4bca5fb46b38baf4993563d7ff3a97bd
+  - enabled: 1
+    path: Assets/Scenes/Essentials/Boss Levels/HR.unity
+    guid: 617342cc694600c4fa5c6e232e79a1cd
+  m_configObjects: {}

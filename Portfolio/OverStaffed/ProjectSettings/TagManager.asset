@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Enemy
+  - Reticle
+  - flashDamage
+  - LevelManager
+  - ElementFinder
+  - PlayerSpawn
+  - UI
+  - PlayerRespawn
+  - BGM
+  - GameManager
+  - AudioManager
+  - MultiSpawner
+  - SingleSpawner
+  - Wall
+  - HealingPotion
+  - Spawner
+  - Pickup
+  - EnemyCollision
+  - SubCamera
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - Player
+  - Water
+  - UI
+  - Enemy
+  - Enemy Bullet
+  - Invisible Player
+  - Weapon
+  - Invisible To Player
+  - Enemy Spawner
+  - EnemyHitBox
+  - Interactable
+  - Boss Projectile
+  - Enemies Can Pass Through
+  - Explosion
+  - Invisible
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
