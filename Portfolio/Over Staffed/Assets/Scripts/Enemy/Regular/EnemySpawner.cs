@@ -7,25 +7,23 @@ using UnityEngine.UIElements;
 public class EnemySpawner : MonoBehaviour
 {
     [Header("----- Spawner Settings -----")]
-    [SerializeField] bool spawnsOnLevelLoad; //if it does not spawn on level load it is an area spawner
+    [SerializeField] bool spawnsOnLevelLoad; //if it does not spawn on level load it is an ambush spawner
     [SerializeField] bool isAreaSpawner;
 
     [Header("----- Enemies To Spawn (Must Have One Enemy Type) -----")]
     [SerializeField] GameObject[] enemyTypesToSpawn;
-    [Range(0, 100)][SerializeField] int[] enemyTypeSpawnWeighting;
+    [SerializeField] float[] enemyTypeSpawnWeighting;
 
     [Header("----- Ambush Spawner Settings (Does Not Spawn On Load) -----")]
     [SerializeField] int baseNumberEnemiesToSpawn;
     [SerializeField] float timeBetweenSpawns;
 
-    [Header("----- Postion Spawner Settings (Is not an Area Spawner) -----")]
+    [Header("----- Position Spawner Settings (Is not an Area Spawner) -----")]
     [SerializeField] Transform[] spawnPositions;
 
     [Header("----- Area Spawner Settings -----")]
     [SerializeField] float spawnAreaX;
     [SerializeField] float spawnAreaZ;
-    
-    private List<GameObject> totalList = new List<GameObject>();
         
     private bool playerDetected;
     private bool isAmbushSpawning;
@@ -167,24 +165,61 @@ public class EnemySpawner : MonoBehaviour
         ++levelManager.currentEnemiesSpawned;
     }
 
+    int WeightedEnemySelectHelper(float startingValue, int currentIndex, float randomNumber)
+    {
+        //prevent null
+        if (currentIndex < enemyTypeSpawnWeighting.Length)
+        {
+            float endValue = startingValue + enemyTypeSpawnWeighting[currentIndex];
+            if (randomNumber < endValue)
+            {
+                return currentIndex;
+            }
+
+            return WeightedEnemySelectHelper(endValue, currentIndex + 1, randomNumber);
+        }
+
+        return 0;
+    }
+
     GameObject WeightedEnemySelect()
     {
-        int randomIndex = Random.Range(0, totalList.Count);
+        float totalWeight = 0.0f;
+        if (enemyTypesToSpawn.Length > 0 && enemyTypesToSpawn.Length == enemyTypeSpawnWeighting.Length)
+        {
+            for(int i = 0; i < enemyTypeSpawnWeighting.Length; i++)
+            {
+                totalWeight += enemyTypeSpawnWeighting[i];
+            }
+        }
+        else
+        {
+            //Spawner not set up correctly, return null
+            return null;
+        }
 
-        return totalList[randomIndex];
+        float randomNumber = Random.Range(0.0f, totalWeight);
+        int randomIndex = WeightedEnemySelectHelper(0.0f, 0, randomNumber);
+
+        return enemyTypesToSpawn[randomIndex];
     }
 
     public void AreaSpawnEnemy()
     {
-        GameObject tospawn = WeightedEnemySelect();
-        GameObject spawned = Instantiate(tospawn, GetSpawnCoordinates(), gameObject.transform.rotation);
-        spawned.GetComponent<EnemyAI>().spawnedBySpawner = true;
-        ++levelManager.currentEnemiesSpawned;
+        GameObject toSpawn = WeightedEnemySelect();
+        if (tospawn != null)
+        {
+            GameObject spawned = Instantiate(toSpawn, GetSpawnCoordinates(), gameObject.transform.rotation);
+            spawned.GetComponent<EnemyAI>().spawnedBySpawner = true;
+            ++levelManager.currentEnemiesSpawned;
+        }
     }
 
     Vector3 GetSpawnCoordinates()
     {
-        return new Vector3(Random.Range(gameObject.transform.position.x - (spawnAreaX / 2), transform.position.x + (spawnAreaX / 2)), gameObject.transform.position.y, Random.Range(transform.position.z - (spawnAreaZ / 2), transform.position.z + (spawnAreaZ / 2)));
+        return new Vector3(Random.Range(gameObject.transform.position.x - (spawnAreaX / 2), transform.position.x + (spawnAreaX / 2)), 
+            gameObject.transform.position.y, 
+            Random.Range(transform.position.z - (spawnAreaZ / 2), transform.position.z + (spawnAreaZ / 2)));
     }
 
     private void OnDrawGizmos()

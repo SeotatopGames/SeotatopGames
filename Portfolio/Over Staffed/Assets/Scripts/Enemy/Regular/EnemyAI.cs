@@ -106,14 +106,6 @@ public class EnemyAI : MonoBehaviour, IDamage, IPhysics
 
     void Update()
     {
-        
-        //StartCoroutine(SlowEnemy());
-        //if (anim != null)
-        //{
-        //    float speed = 0;
-        //    speed = Mathf.Lerp(speed, navAgent.velocity.normalized.magnitude, Time.deltaTime * animTransSpeed);
-        //    anim.SetFloat("Speed", speed);
-        //}
         if (player != null)
         {
 
@@ -121,6 +113,7 @@ public class EnemyAI : MonoBehaviour, IDamage, IPhysics
             {
                 hpDisplay.transform.LookAt(player.transform.position);
             }
+
             if (navAgent.enabled)
             {
                 navAgent.SetDestination(player.transform.position);
@@ -130,7 +123,8 @@ public class EnemyAI : MonoBehaviour, IDamage, IPhysics
                     AttackPlayer();
                 }
                 
-                if(navAgent.remainingDistance < navAgent.stoppingDistance){
+                if(navAgent.remainingDistance < navAgent.stoppingDistance)
+                {
                     FacePlayer();
                 }
             }
@@ -140,6 +134,7 @@ public class EnemyAI : MonoBehaviour, IDamage, IPhysics
             player = gameManager.instance.playerCharacter;
         }
     }
+
     //IEnumerator SlowEnemy()
     //{
     //    if (isSlowed)
@@ -171,18 +166,17 @@ public class EnemyAI : MonoBehaviour, IDamage, IPhysics
     bool CanSeePlayer()
     {
         playerDirection = (player.transform.position - headPosition.position);
-        angleToPlayer = Vector3.Angle(new Vector3(playerDirection.x, 0, playerDirection.z), transform.forward);
 
         Debug.DrawRay(headPosition.position, playerDirection);
 
         if (Physics.Raycast(headPosition.position, playerDirection, out RaycastHit hit))
         {
+            angleToPlayer = Vector3.Angle(new Vector3(playerDirection.x, 0, playerDirection.z), transform.forward);
             if (hit.collider.CompareTag("Player") && angleToPlayer < fFieldOfView / 2)
             {
                 playerDistance = hit.distance;
                 return true;
-            }
-            
+            }            
         }
 
         return false;
@@ -212,6 +206,8 @@ public class EnemyAI : MonoBehaviour, IDamage, IPhysics
                 case Category.Exploding:
                     AudioManager.instance.EnemyExpShoot();
                     StartCoroutine(Explode());
+                    break;
+                default:
                     break;
             }
         }
