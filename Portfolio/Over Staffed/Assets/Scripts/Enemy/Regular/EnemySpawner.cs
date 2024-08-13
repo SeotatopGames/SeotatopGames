@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +46,6 @@ public class EnemySpawner : MonoBehaviour
                 levelManager = LevelManager.instance;
             }
             SetAmbushVariables();
-            InitializeTotalSpawnList();
         }
     }
 
@@ -57,20 +57,6 @@ public class EnemySpawner : MonoBehaviour
             level = 0;
         }
         numberOfEnemiesToSpawn = (int)(baseNumberEnemiesToSpawn * ((level * levelManager.numberOfEnemiesScaling) + 1));
-    }
-
-    private void InitializeTotalSpawnList()
-    {
-        if (enemyTypesToSpawn.Length <= enemyTypeSpawnWeighting.Length)
-        {
-            for (int i = 0; i < enemyTypesToSpawn.Length; ++i)
-            {
-                for (int j = 0; j < enemyTypeSpawnWeighting[i]; ++j)
-                {
-                    totalList.Add(enemyTypesToSpawn[i]);
-                }
-            }
-        }
     }
 
     private void Update()
@@ -159,57 +145,65 @@ public class EnemySpawner : MonoBehaviour
     public void LocationSpawnEnemy(Transform locationToSpawn)
     {
         GameObject enemyToSpawn = WeightedEnemySelect();
-        Vector3 randomPosition = new Vector3(locationToSpawn.position.x + Random.Range(-1.0f, 1.0f), locationToSpawn.position.y, locationToSpawn.position.z + Random.Range(-1.0f, 1.0f));
+        Vector3 randomPosition = new Vector3(locationToSpawn.position.x + Random.Range(-1.0f, 1.0f), 
+            locationToSpawn.position.y, 
+            locationToSpawn.position.z + Random.Range(-1.0f, 1.0f));
         GameObject spawned = Instantiate(enemyToSpawn, randomPosition, locationToSpawn.rotation);
         spawned.GetComponent<EnemyAI>().spawnedBySpawner = true;
         ++levelManager.currentEnemiesSpawned;
     }
 
-    int WeightedEnemySelectHelper(float startingValue, int currentIndex, float randomNumber)
-    {
-        //prevent null
-        if (currentIndex < enemyTypeSpawnWeighting.Length)
-        {
-            float endValue = startingValue + enemyTypeSpawnWeighting[currentIndex];
-            if (randomNumber < endValue)
-            {
-                return currentIndex;
-            }
-
-            return WeightedEnemySelectHelper(endValue, currentIndex + 1, randomNumber);
-        }
-
-        return 0;
-    }
-
     GameObject WeightedEnemySelect()
     {
-        float totalWeight = 0.0f;
-        if (enemyTypesToSpawn.Length > 0 && enemyTypesToSpawn.Length == enemyTypeSpawnWeighting.Length)
+        if (enemyTypesToSpawn.Length > 0)
         {
-            for(int i = 0; i < enemyTypeSpawnWeighting.Length; i++)
+            //Only one enemy type, weighting doesn't matter
+            if (enemyTypesToSpawn.Length == 1)
             {
-                totalWeight += enemyTypeSpawnWeighting[i];
+                return enemyTypesToSpawn[0];
+            }
+
+            float totalWeight = 0.0f;
+            if (enemyTypesToSpawn.Length == enemyTypeSpawnWeighting.Length)
+            {
+                for (int i = 0; i < enemyTypeSpawnWeighting.Length; i++)
+                {
+                    totalWeight += enemyTypeSpawnWeighting[i];
+                }
+            }
+
+            if(totalWeight > 0.0f)
+            {
+                //Min inclusive, max exclusive
+                float randomNumber = Random.Range(0.0f, totalWeight);
+
+                float endValue = 0.0f;
+                for (int i = 0; i < enemyTypesToSpawn.Length; i++)
+                {
+                    endValue += enemyTypeSpawnWeighting[i];
+                    if (randomNumber < endValue)
+                    {
+                        return enemyTypesToSpawn[i];
+                    }
+                }
+            }
+            else
+            {
+                return enemyTypesToSpawn[Random.Range(0, enemyTypesToSpawn.Length - 1)];
             }
         }
-        else
-        {
-            //Spawner not set up correctly, return null
-            return null;
-        }
 
-        float randomNumber = Random.Range(0.0f, totalWeight);
-        int randomIndex = WeightedEnemySelectHelper(0.0f, 0, randomNumber);
-
-        return enemyTypesToSpawn[randomIndex];
+        //Spawner not set up correctly, return null
+        return null;
     }
 
     public void AreaSpawnEnemy()
     {
         GameObject toSpawn = WeightedEnemySelect();
-        if (tospawn != null)
+        if (toSpawn != null)
         {
-            GameObject spawned = Instantiate(toSpawn, GetSpawnCoordinates(), gameObject.transform.rotation);
+            GameObject spawned = Instantiate(toSpawn, GetSpawnCoordinates(), 
+                gameObject.transform.rotation);
             spawned.GetComponent<EnemyAI>().spawnedBySpawner = true;
             ++levelManager.currentEnemiesSpawned;
         }
