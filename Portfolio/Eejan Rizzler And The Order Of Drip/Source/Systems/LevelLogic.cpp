@@ -20,37 +20,6 @@ bool EROD::LevelLogic::Init(	std::shared_ptr<flecs::world> _game,
 	// create an asynchronus version of the world
 	gameAsync = game->async_stage(); // just used for adding stuff, don't try to read data
 	gameLock.Create();
-	// Pull enemy Y start location from config file
-	//std::shared_ptr<const GameConfig> readCfg = _gameConfig.lock();
-	//float enemy1startY = (*readCfg).at("Enemy1").at("ystart").as<float>();
-	//float enemy1accmax = (*readCfg).at("Enemy1").at("accmax").as<float>();
-	//float enemy1accmin = (*readCfg).at("Enemy1").at("accmin").as<float>();
-	//// level one info
-	//float spawnDelay = (*readCfg).at("Level1").at("spawndelay").as<float>();
-	
-	// spins up a job in a thread pool to invoke a function at a regular interval
-	//timedEvents.Create(spawnDelay * 1000, [this, enemy1startY, enemy1accmax, enemy1accmin]() {
-	//	// compute random spawn location
-	//	std::random_device rd;  // Will be used to obtain a seed for the random number engine
-	//	std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
-	//	std::uniform_real_distribution<float> x_range(-0.9f, +0.9f);
-	//	std::uniform_real_distribution<float> a_range(enemy1accmin, enemy1accmax);
-	//	float Xstart = x_range(gen); // normal rand() doesn't work great multi-threaded
-	//	float accel = a_range(gen);
-	//	// grab enemy type 1 prefab
-	//	flecs::entity et1; 
-	//	if (RetreivePrefab("Enemy Type1", et1)) {
-	//		// you must ensure the async_stage is thread safe as it has no built-in synchronization
-	//		gameLock.LockSyncWrite();
-	//		// this method of using prefabs is pretty conveinent
-	//		gameAsync.entity().is_a(et1)
-	//			.set<Velocity>({ 0,0 })
-	//			.set<Acceleration>({ 0, -accel })
-	//			.set<Position>({ Xstart, enemy1startY });
-	//		// be sure to unlock when done so the main thread can safely merge the changes
-	//		gameLock.UnlockSyncWrite();
-	//	}
-	//}, 5000); // wait 5 seconds to start enemy wave
 
 	// create a system the runs at the end of the frame only once to merge async changes
 	struct LevelSystem {}; // local definition so we control iteration counts
@@ -94,17 +63,3 @@ bool EROD::LevelLogic::Activate(bool runSystem)
 	}
 	return false;
 }
-
-// **** SAMPLE OF MULTI_THREADED USE ****
-//flecs::world world; // main world
-//flecs::world async_stage = world.async_stage();
-//
-//// From thread
-//lock(async_stage_lock);
-//flecs::entity e = async_stage.entity().child_of(parent)...
-//unlock(async_stage_lock);
-//
-//// From main thread, periodic
-//lock(async_stage_lock);
-//async_stage.merge(); // merge all commands to main world
-//unlock(async_stage_lock);

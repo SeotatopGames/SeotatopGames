@@ -41,7 +41,6 @@ bool EROD::PelletLogic::Init(std::shared_ptr<flecs::world> _game,
 		playerEntity = e;
 			});
 	ghostHolder = game->query<Ghost>();
-	// destroy any bullets that have the CollidedWith relationship
 	game->system<Collectable>("Pellet System")
 		.each([this](flecs::entity& e, Collectable c)
 		{
@@ -71,7 +70,7 @@ bool EROD::PelletLogic::Init(std::shared_ptr<flecs::world> _game,
 						currentSong->Create("../Music/Loyalty_Freak_Music_-_04_-_Cant_Stop_My_Feet_(chosic.com).wav", audioEngine, 0.5f);
 						currentSong->Play(true);
 						EatGhost();
-						//unsigned index = e.get_mut<ModelBoundary>()->transformIndex - instanceEntity.get_mut<MeshInstance>()->instanceTransformStart;
+						
 						p->score += 50;
 						
 					}
@@ -178,12 +177,6 @@ bool EROD::PelletLogic::Shutdown()
 	return true;
 }
 
-// Toggle if a system's Logic is actively running
-//bool ESG::PelletLogic::Activate(bool runSystem)
-//{
-//	return false;
-//}
-
 void EROD::PelletLogic::EatGhost()
 {
 	if (!playerEntity.get_mut<PowerUp>()->poweredUp) 
@@ -194,8 +187,6 @@ void EROD::PelletLogic::EatGhost()
 		playerEntity.get_mut<PowerUp>()->timer->Restart();
 		playerEntity.get_mut<PowerUp>()->timer->Signal();
 	}
-	//time.enable();
-	//auto timePassed = time.delta_time();
 }
 
 void EROD::PelletLogic::ResetGhost()
@@ -212,7 +203,6 @@ void EROD::PelletLogic::ResetGhost()
 			ghostSpawnNode->targetNode = ghostSpawnNode->spawnNode;
 		});
 	ghostCount = ghostCount;
-	//game->entity("Ghost Reset").destruct();
 }
 
 void EROD::PelletLogic::ResetPellets()
@@ -234,4 +224,3 @@ void EROD::PelletLogic::ResetPellets()
 	powerPelletData.Unload(game);
 	powerPelletData.Load(game, gameConfig, *levelData, powerPelletMeshInstance->model, powerPelletMeshInstance->instanceNumber);
 }
-

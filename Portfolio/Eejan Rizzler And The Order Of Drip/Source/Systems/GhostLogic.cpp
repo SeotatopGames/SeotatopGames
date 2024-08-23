@@ -108,7 +108,6 @@ bool EROD::GhostLogic::Init(std::shared_ptr<flecs::world> _game,
 				{
 					if (*pause)
 						return;
-					//if (sqrt(pow((-c.x), 2.0f) + pow((jY - iY), 2.0f)) //distance check for future use
           
 					//If ghost homenode == nullptr //This should initialize the system once
 					//	Collision check for home node 
@@ -116,7 +115,6 @@ bool EROD::GhostLogic::Init(std::shared_ptr<flecs::world> _game,
 					//	If distance less than 0.1f set TravelNode to Ghost->HomeNode
 					//	set current node to home node
 					//	set target node to home node
-
 					float xG = e.get<ModelTransform>()->modelTransform->row4.x;
 					float yG = e.get<ModelTransform>()->modelTransform->row4.z;
 					float tolerance = 0.1f;
@@ -156,8 +154,7 @@ bool EROD::GhostLogic::Init(std::shared_ptr<flecs::world> _game,
 					//	while (target node == nullptr)
 					//		rand int 0->3 (0 == up, etc...)
 					//		if rand == 0 and currentnode->up != nullptr
-					//			set target node to up //do for each direction
-					
+					//			set target node to up //do for each direction					
 					if (e.get<Ghost>()->targetNode == e.get<Ghost>()->currentNode)
 					{
 						e.get_mut<Ghost>()->targetNode = nullptr;
@@ -199,18 +196,7 @@ bool EROD::GhostLogic::Init(std::shared_ptr<flecs::world> _game,
 						yG = yG + (e.get_mut<Ghost>()->targetNode->y - e.get_mut<Ghost>()->currentNode->y)
 							* e.get_mut<Ghost>()->speed * e.delta_time() * ((currentLevel + 1.0f) * 0.1f);
 
-						//if (abs(xG) > abs(e.get<Ghost>()->targetNode->x) + tolerance && sqrt(pow((xT - e.get<ModelTransform>()->modelTransform->row4.x), 2.0f) + pow((yT - e.get<ModelTransform>()->modelTransform->row4.z), 2.0f) > tolerance))
-						//{
-						//	xG = e.get<Ghost>()->targetNode->x;
-						//	gLog.Log("ghost overshoot prevented X");
-						//}
-						//if (abs(yG) > abs(e.get<Ghost>()->targetNode->y) + tolerance && sqrt(pow((xT - e.get<ModelTransform>()->modelTransform->row4.x), 2.0f) + pow((yT - e.get<ModelTransform>()->modelTransform->row4.z), 2.0f) > tolerance))
-						//{
-						//	yG = e.get<Ghost>()->targetNode->y;
-						//	gLog.Log("ghost overshoot prevented Y");
-						//} //failed attempt at overshoot prevention
-
-						if (e.get<Ghost>()->targetNode->type == 17) //ghost hits exit right so its target is exits left
+						if (e.get<Ghost>()->targetNode->type == 17) //ghost hits exit right so its target is exit left
 						{
 							xG = e.get<Ghost>()->targetNode->right->x;
 							yG = e.get<Ghost>()->targetNode->right->y;
@@ -254,7 +240,7 @@ bool EROD::GhostLogic::Shutdown()
 	game->entity("Ghost System").destruct();
 	game->entity("Ghost Hit Player System").destruct();
 	game->entity("Ghost Movement System").destruct();
-	// invalidate the shared pointers
+
 	game.reset();
 	gameConfig.reset();
 	return true;
@@ -271,5 +257,4 @@ void EROD::GhostLogic::ResetGhost()
 			ghostSpawnNode->currentNode = ghostSpawnNode->spawnNode;
 			ghostSpawnNode->targetNode = ghostSpawnNode->spawnNode;
 		});
-	//game->entity("Ghost Reset").destruct();
 }
