@@ -37,8 +37,8 @@ bool EROD::PlayerLogic::Init(std::shared_ptr<flecs::world> _game,
 	float speed = (*readCfg).at("Player1").at("speed").as<float>();
 	// add logic for updating players
 	playerSystem = game->system<Player, ModelTransform, ControllerID, ModelBoundary>("Player System")
-		.iter([this, speed](flecs::iter it, Player* p, ModelTransform* t, ControllerID* c, ModelBoundary* b) {
-
+		.iter([this, speed](flecs::iter it, Player* p, ModelTransform* t, ControllerID* c, ModelBoundary* b) 
+		{
 			for (auto i : it) 
 			{
 				// Use the controller/keyboard to move the player around the screen			
@@ -61,7 +61,6 @@ bool EROD::PlayerLogic::Init(std::shared_ptr<flecs::world> _game,
 						{
 							immediateInput.GetState(G_KEY_LEFT, input); xaxis -= input;
 							immediateInput.GetState(G_KEY_A, input); xaxis -= input;
-							//controllerInput.GetState(G_DPAD_LEFT_BTN, input); xaxis -= input;
 							currentKey = 1;
 							if (xaxis >= -0.1f)
 							{
@@ -76,7 +75,6 @@ bool EROD::PlayerLogic::Init(std::shared_ptr<flecs::world> _game,
 						{
 							immediateInput.GetState(G_KEY_RIGHT, input); xaxis += input;
 							immediateInput.GetState(G_KEY_D, input); xaxis += input;
-							//controllerInput.GetState(G_DPAD_RIGHT_BTN, input); xaxis += input;
 							currentKey = 2;
 							if (xaxis <= 0.1f)
 							{
@@ -91,7 +89,6 @@ bool EROD::PlayerLogic::Init(std::shared_ptr<flecs::world> _game,
 						{
 							immediateInput.GetState(G_KEY_UP, input); yaxis += input;
 							immediateInput.GetState(G_KEY_W, input); yaxis += input;
-							//controllerInput.GetState(G_DPAD_UP_BTN, input); yaxis += input;
 							currentKey = 3;
 							if (yaxis <= 0.1f)
 							{
@@ -106,7 +103,6 @@ bool EROD::PlayerLogic::Init(std::shared_ptr<flecs::world> _game,
 						{
 							immediateInput.GetState(G_KEY_DOWN, input); yaxis -= input;
 							immediateInput.GetState(G_KEY_S, input); yaxis -= input;
-							//controllerInput.GetState(G_DPAD_DOWN_BTN, input); yaxis -= input;
 							currentKey = 4;
 							if (yaxis >= -0.1f)
 							{
@@ -140,17 +136,17 @@ bool EROD::PlayerLogic::Init(std::shared_ptr<flecs::world> _game,
 	playerSystem = game->system<PowerUp>("Power-Up Timer")
 		.each([this](PowerUp& p)
 		{ 
-		 if (p.poweredUp == true && !pauseCheck) 
-	     { 
-			 time += p.timer->TotalTime() * 600;
-		   if (time >= 1)
-		   {
-			   p.poweredUp = false;
-			   p.currentTime = 0;
-			   time = 0;
-			   currentSong->Stop();
-		   }
-	     }
+			if (p.poweredUp == true && !pauseCheck) 
+			{ 
+				time += p.timer->TotalTime() * 600;
+				if (time >= 1)
+				{
+					p.poweredUp = false;
+					p.currentTime = 0;
+					time = 0;
+					currentSong->Stop();
+				}
+			}
 	   });
 
 	// Create an event cache for when the spacebar/'A' button is pressed

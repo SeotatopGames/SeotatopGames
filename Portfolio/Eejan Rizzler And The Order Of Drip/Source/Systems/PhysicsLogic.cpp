@@ -3,7 +3,7 @@
 #include "../Components/Model_Data.h"
 #include"../Components/Identification.h"
 
-bool EROD::PhysicsLogic::Init(	std::shared_ptr<flecs::world> _game, 
+bool EROD::PhysicsLogic::Init(std::shared_ptr<flecs::world> _game, 
 								std::weak_ptr<const GameConfig> _gameConfig)
 {
 	// save a handle to the ECS & game settings
@@ -57,40 +57,38 @@ bool EROD::PhysicsLogic::Init(	std::shared_ptr<flecs::world> _game,
 			queryCache.each([this](flecs::entity e, Collidable& c, ModelTransform& t, ModelBoundary& b) 
 			{
 				SHAPE polygon; // compute buffer for this objects polygon
-				// This is critical, if you want to store an entity handle it must be mutable
-				polygon.owner = e; // allows later changes
+				polygon.owner = e;
 				polygon.ob = b.boundary;
 				testCache.push_back(polygon);
 			});
-			// loop through the testCahe resolving all collisions
-			// the inner loop starts at the entity after you so you don't double check collisions
-				for (int j = 0; j < testCache.size(); ++j) 
+
+			for (int j = 0; j < testCache.size(); ++j) 
+			{
+			// test the two world space polygons for collision
+			// possibly make this cheaper by leaving one of them local and using an inverse matrix
+			GW::MATH::GCollision::GCollisionCheck result;
+			if (abs(playerBound.center.x - testCache[j].ob.center.x) <= playerBound.extent.x && abs(playerBound.center.z - testCache[j].ob.center.z) <= playerBound.extent.z)
+			{
+				GW::MATH::GCollision::TestOBBToOBBF(playerBound, testCache[j].ob, result);
+				if (result == GW::MATH::GCollision::GCollisionCheck::COLLISION)
 				{
-				// test the two world space polygons for collision
-				// possibly make this cheaper by leaving one of them local and using an inverse matrix
-				GW::MATH::GCollision::GCollisionCheck result;
-				if (abs(playerBound.center.x - testCache[j].ob.center.x) <= playerBound.extent.x && abs(playerBound.center.z - testCache[j].ob.center.z) <= playerBound.extent.z)
-				{
-					GW::MATH::GCollision::TestOBBToOBBF(playerBound, testCache[j].ob, result);
-					if (result == GW::MATH::GCollision::GCollisionCheck::COLLISION)
-					{
-						// Create an ECS relationship between the colliders
-						// Each system can decide how to respond to this info independently
-						testCache[j].owner.add<CollidedWith>(player);
-						player.add<CollidedWith>(testCache[j].owner);
-					}
-					else
-					{
-						testCache[j].owner.remove<CollidedWith>(player);
-						player.remove<CollidedWith>(testCache[j].owner);
-					}
+					// Create an ECS relationship between the colliders
+					// Each system can decide how to respond to this info independently
+					testCache[j].owner.add<CollidedWith>(player);
+					player.add<CollidedWith>(testCache[j].owner);
 				}
 				else
 				{
 					testCache[j].owner.remove<CollidedWith>(player);
 					player.remove<CollidedWith>(testCache[j].owner);
 				}
-				}
+			}
+			else
+			{
+				testCache[j].owner.remove<CollidedWith>(player);
+				player.remove<CollidedWith>(testCache[j].owner);
+			}
+			}
 			// wipe the test cache for the next frame (keeps capacity intact)
 			testCache.clear();
 		});
